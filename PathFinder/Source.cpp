@@ -41,10 +41,13 @@ void display()
 }
 void initField()
 {
+	srand(time(NULL));
 	for (int i = 1; i < SIZE - 1; i++)
 	for (int j = 1; j < SIZE - 1; j++)
 	{
 		a[i][j] = -1;
+		if (rand() % 5 == 0)
+			a[i][j] = 999;
 	}
 	for (int j = 0; j < SIZE; j++)
 	{
@@ -97,7 +100,7 @@ void findPath()
 			}
 		}
 		oldWave = wave;
-	}
+	} 
 fin:
 	int x = SIZE - 2;
 	int y = SIZE - 2;
