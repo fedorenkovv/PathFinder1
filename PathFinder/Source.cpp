@@ -28,6 +28,9 @@ void display()
 				std::cout << 'O';
 				break;
 			case -3:
+				std::cout << '.';
+				break;
+			case -4:
 				std::cout << 'X';
 				break;
 			default:
@@ -59,25 +62,21 @@ void initField()
 
 }
 
-void createPoints()
+void createPoints(pair<int, int> *p, pair<int, int> *b)
 {
-	int startX = 1;// rand() % (SIZE - 1) + 1;
-	int startY = 1;// rand() % (SIZE - 1) + 1;
-	finishX = 14;// rand() % (SIZE - 2) + 1;
-	finishY = 14;// rand() % (SIZE - 2) + 1;
-	a[startX][startY] = -1;
-	a[finishX][finishY] = -1;
+	a[p->first][p->second] = -1;
+	a[b->first][b->second] = -1;
 
-	oldWave.push_back(pair<int, int>(startX, startY));
+	oldWave.push_back(*p);
 }
 
-void findPath()
+void findPath(pair<int, int> *p, pair<int, int> *b)
 {
 	int numStep = 0;
 	int dx[] = { 0, 1, 0, -1 };
 	int dy[] = { -1, 0, 1, 0 };
-	oldWave.push_back(pair<int, int>(1, 1));
-	a[1][1] = numStep;
+	oldWave.push_back(*p);
+	a[p->first][p->second] = numStep;
 
 	while (oldWave.size() > 0)
 	{
@@ -88,13 +87,13 @@ void findPath()
 			const int dir = 4;
 			for (int j = 0; j < dir; j++)
 			{
-				int nx = /*(i->first + dx[j] > 0 && i->first + dx[j] < SIZE - 1) ? */i->first + dx[j];
+				int nx = i->first + dx[j];
 				int ny = i->second + dy[j];
 				if (a[nx][ny] == -1)
 				{
 					wave.push_back(pair<int, int>(nx,ny));
 					a[nx][ny] = numStep;
-					if (nx == SIZE - 2 && ny == SIZE - 2)
+					if (nx == b->first - 1 && ny == b->second - 1)
 						goto fin;
 				}
 			}
@@ -102,8 +101,8 @@ void findPath()
 		oldWave = wave;
 	} 
 fin:
-	int x = SIZE - 2;
-	int y = SIZE - 2;
+	int x = b->first;
+	int y = b->second;
 	wave.clear();
 	wave.push_back(pair<int, int>(x, y));
 	while (a[x][y] != 0)
@@ -117,13 +116,15 @@ fin:
 				x = nx;
 				y = ny;
 				wave.push_back(pair<int, int>(x, y));
-				break;
-				
+				break;				
 			}
 		}
 	}
 	for (int i = 0; i < wave.size(); i++)
 		a[wave[i].first][wave[i].second] = -3;
+	a[p->first][p->second] = -4;
+	a[b->first][b->second] = -2;
+
 
 	system("cls");
 	display();
@@ -132,9 +133,11 @@ int main()
 {
 	srand(time(0));
 	initField();
-	createPoints();
+	pair<int, int> p(2, 2);
+	pair<int, int> b(12, 7);
+	createPoints(&p, &b);
 	display();
-	findPath();
+	findPath(&p,&b);
 
 
 	return 0;
